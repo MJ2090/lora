@@ -13,11 +13,15 @@ sudo python3 install_gpu_driver.py
 invidia-smi
 echo "CUDA ended ================================"
 
-echo "LOAR started =============================="
-git clone git@github.com:MJ2090/lora.git
+echo "LORA started =============================="
 pip install -r lora/requirements.txt
+echo "LORA ended ================================"
+
+echo "BASH started =============================="
 echo 'export LD_LIBRARY_PATH=:/usr/lib/x86_64-linux-gnu/' >> ~/.bashrc
+echo 'alias g3="python3"' >> ~/.bashrc
+echo 'alias gl="git pull"' >> ~/.bashrc
 source ~/.bashrc
-echo "LOAR ended ================================"
+echo "BASH ended ================================"
 
 echo "ALL ended ================================="
