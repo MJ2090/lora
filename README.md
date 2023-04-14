@@ -1,6 +1,9 @@
 # Get started
+```bash
 git clone git@github.com:MJ2090/lora.git
+
 sh ~/lora/init.sh
+```
 
 # 🦙🌲🤏 Alpaca-LoRA
 
