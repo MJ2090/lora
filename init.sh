@@ -14,7 +14,7 @@ invidia-smi
 echo "CUDA ended ================================"
 
 echo "LORA started =============================="
-pip install -r lora/requirements.txt
+pip install -r ~/lora/requirements.txt
 echo "LORA ended ================================"
 
 echo "BASH started =============================="
