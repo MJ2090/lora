@@ -1,3 +1,7 @@
+# Get started
+git clone git@github.com:MJ2090/lora.git
+sh ~/lora/init.sh
+
 # 🦙🌲🤏 Alpaca-LoRA
 
 - 🤗 **Try the pretrained model out [here](https://huggingface.co/spaces/tloen/alpaca-lora), courtesy of a GPU grant from Huggingface!**
