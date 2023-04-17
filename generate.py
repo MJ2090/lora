@@ -23,7 +23,7 @@ except:  # noqa: E722
     pass
 
 
-def get_model(device: str = ''):
+def get_model(device: str = '', load_8bit: bool = False):
     if device == "cuda":
         model = LlamaForCausalLM.from_pretrained(
             base_model,
@@ -57,6 +57,19 @@ def get_model(device: str = ''):
             lora_weights,
             device_map={"": device},
         )
+        
+    # unwind broken decapoda-research config
+    model.config.pad_token_id = tokenizer.pad_token_id = 0  # unk
+    model.config.bos_token_id = 1
+    model.config.eos_token_id = 2
+
+    if not load_8bit:
+        model.half()  # seems to fix bugs for some users.
+
+    model.eval()
+    if torch.__version__ >= "2" and sys.platform != "win32":
+        model = torch.compile(model)
+    
     return model
 
 
@@ -77,17 +90,6 @@ def main(
     tokenizer = LlamaTokenizer.from_pretrained(base_model)
     
     model = get_model(device)
-    # unwind broken decapoda-research config
-    model.config.pad_token_id = tokenizer.pad_token_id = 0  # unk
-    model.config.bos_token_id = 1
-    model.config.eos_token_id = 2
-
-    if not load_8bit:
-        model.half()  # seems to fix bugs for some users.
-
-    model.eval()
-    if torch.__version__ >= "2" and sys.platform != "win32":
-        model = torch.compile(model)
 
     def evaluate(
         instruction,
