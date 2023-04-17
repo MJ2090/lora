@@ -136,7 +136,7 @@ def main(
         if verbose:
             print("s = ", s, "\nEND_s")
             print("output = ", output, "\nEND_output\n")
-        yield prompter.get_response(output)
+        yield prompter.get_response(output), output
 
     gr.Interface(
         fn=evaluate,
@@ -162,12 +162,15 @@ def main(
             gr.components.Slider(
                 minimum=1, maximum=2000, step=1, value=128, label="Max tokens"
             ),
-            gr.components.Checkbox(label="Stream output"),
         ],
         outputs=[
             gr.components.Textbox(
                 lines=5,
                 label="Output",
+            )
+            gr.components.Textbox(
+                lines=10,
+                label="Original Output",
             )
         ],
         title="LoRA from L5",
