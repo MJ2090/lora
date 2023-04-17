@@ -23,7 +23,7 @@ except:  # noqa: E722
     pass
 
 
-def get_model(device: str = '', load_8bit: bool = False):
+def get_model(device: str = '', load_8bit: bool = False, base_model: str = '', lora_weights: str = ''):
     if device == "cuda":
         model = LlamaForCausalLM.from_pretrained(
             base_model,
@@ -88,7 +88,7 @@ def main(
 
     prompter = Prompter(prompt_template)
     tokenizer = LlamaTokenizer.from_pretrained(base_model)
-    model = get_model(device)
+    model = get_model(device, load_8bit, base_model, lora_weights)
 
     def evaluate(
         instruction,
