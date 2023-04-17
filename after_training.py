@@ -10,7 +10,7 @@ DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 DEVICE
 
 
-def run_fine_tuend_model(base_model: str="decapoda-research/llama-7b-hf",model_path: str=""):
+def run_fine_tuned_model(base_model: str="decapoda-research/llama-7b-hf", model_path: str=""):
     tokenizer = LlamaTokenizer.from_pretrained(base_model)
     model = LlamaForCausalLM.from_pretrained(
         base_model,
@@ -26,7 +26,7 @@ def run_fine_tuend_model(base_model: str="decapoda-research/llama-7b-hf",model_p
 
     my_p = ["What is the meaning of life?"]
     for prompt in my_p:
-        ask_alpaca(prompt)
+        ask_alpaca(prompt, model, tokenizer)
 
 
 def create_prompt(instruction: str) -> str:
@@ -66,12 +66,12 @@ def format_response(response: GreedySearchDecoderOnlyOutput, tokenizer) -> str:
     return "\n".join(textwrap.wrap(response))
 
 
-def ask_alpaca(prompt: str, model: PeftModel) -> str:
+def ask_alpaca(prompt: str, model: PeftModel, tokenizer) -> str:
     prompt = create_prompt(prompt)
-    response = generate_response(prompt, model)
+    response = generate_response(prompt, model, tokenizer)
     print(prompt)
-    print(format_response(response))
+    print(format_response(response, tokenizer))
     
 
 if __name__ == "__main__":
-    fire.Fire(run_fine_tuend_model)
+    fire.Fire(run_fine_tuned_model)
