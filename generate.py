@@ -103,6 +103,8 @@ def main(
         **kwargs,
     ):
         prompt = prompter.generate_prompt(instruction, input)
+        if verbose:
+            print("prompt = ", prompt, "\nEND_prompt\n")
         inputs = tokenizer(prompt, return_tensors="pt")
         input_ids = inputs["input_ids"].to(device)
         generation_config = GenerationConfig(
