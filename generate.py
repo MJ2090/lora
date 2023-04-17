@@ -23,21 +23,7 @@ except:  # noqa: E722
     pass
 
 
-def main(
-    load_8bit: bool = False,
-    base_model: str = "decapoda-research/llama-7b-hf",
-    lora_weights: str = "training_results/simple_data_done",
-    prompt_template: str = "",  # The prompt template to use, will default to alpaca.
-    server_name: str = "0.0.0.0",  # Allows to listen on all interfaces by providing '0.
-    share_gradio: bool = False,
-):
-    base_model = base_model or os.environ.get("BASE_MODEL", "")
-    assert (
-        base_model
-    ), "Please specify a --base_model, e.g. --base_model='huggyllama/llama-7b'"
-
-    prompter = Prompter(prompt_template)
-    tokenizer = LlamaTokenizer.from_pretrained(base_model)
+def get_model(device: str = '', load_8bit: bool = False, base_model: str = '', lora_weights: str = '', tokenizer = None):
     if device == "cuda":
         model = LlamaForCausalLM.from_pretrained(
             base_model,
@@ -71,7 +57,7 @@ def main(
             lora_weights,
             device_map={"": device},
         )
-
+        
     # unwind broken decapoda-research config
     model.config.pad_token_id = tokenizer.pad_token_id = 0  # unk
     model.config.bos_token_id = 1
@@ -83,6 +69,27 @@ def main(
     model.eval()
     if torch.__version__ >= "2" and sys.platform != "win32":
         model = torch.compile(model)
+    
+    return model
+
+
+def main(
+    load_8bit: bool = False,
+    base_model: str = "decapoda-research/llama-7b-hf",
+    lora_weights: str = "training_results/simple_data_done",
+    prompt_template: str = "",  # The prompt template to use, will default to alpaca.
+    server_name: str = "0.0.0.0",  # Allows to listen on all interfaces by providing '0.
+    share_gradio: bool = True,
+    verbose: bool = True,
+):
+    base_model = base_model or os.environ.get("BASE_MODEL", "")
+    assert (
+        base_model
+    ), "Please specify a --base_model, e.g. --base_model='huggyllama/llama-7b'"
+
+    prompter = Prompter(prompt_template)
+    tokenizer = LlamaTokenizer.from_pretrained(base_model)
+    model = get_model(device, load_8bit, base_model, lora_weights, tokenizer)
 
     def evaluate(
         instruction,
@@ -96,6 +103,8 @@ def main(
         **kwargs,
     ):
         prompt = prompter.generate_prompt(instruction, input)
+        if verbose:
+            print("prompt = ", prompt, "\nEND_prompt\n")
         inputs = tokenizer(prompt, return_tensors="pt")
         input_ids = inputs["input_ids"].to(device)
         generation_config = GenerationConfig(
@@ -113,39 +122,7 @@ def main(
             "output_scores": True,
             "max_new_tokens": max_new_tokens,
         }
-
-        if stream_output:
-            # Stream the reply 1 token at a time.
-            # This is based on the trick of using 'stopping_criteria' to create an iterator,
-            # from https://github.com/oobabooga/text-generation-webui/blob/ad37f396fc8bcbab90e11ecf17c56c97bfbd4a9c/modules/text_generation.py#L216-L243.
-
-            def generate_with_callback(callback=None, **kwargs):
-                kwargs.setdefault(
-                    "stopping_criteria", transformers.StoppingCriteriaList()
-                )
-                kwargs["stopping_criteria"].append(
-                    Stream(callback_func=callback)
-                )
-                with torch.no_grad():
-                    model.generate(**kwargs)
-
-            def generate_with_streaming(**kwargs):
-                return Iteratorize(
-                    generate_with_callback, kwargs, callback=None
-                )
-
-            with generate_with_streaming(**generate_params) as generator:
-                for output in generator:
-                    # new_tokens = len(output) - len(input_ids[0])
-                    decoded_output = tokenizer.decode(output)
-
-                    if output[-1] in [tokenizer.eos_token_id]:
-                        break
-
-                    yield prompter.get_response(decoded_output)
-            return  # early return for stream_output
-
-        # Without streaming
+        
         with torch.no_grad():
             generation_output = model.generate(
                 input_ids=input_ids,
@@ -156,6 +133,9 @@ def main(
             )
         s = generation_output.sequences[0]
         output = tokenizer.decode(s)
+        if verbose:
+            print("s = ", s, "\nEND_s")
+            print("output = ", output, "\nEND_output\n")
         yield prompter.get_response(output)
 
     gr.Interface(
