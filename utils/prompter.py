@@ -1,5 +1,5 @@
 """
-A dedicated helper to manage templates and prompt building.
+A dedicated helper to manage prompt templates and prompt building.
 """
 
 import json
@@ -15,7 +15,7 @@ class Prompter(object):
         if not template_name:
             # Enforce the default here, so the constructor can be called with '' and will not break.
             template_name = "alpaca"
-        file_name = osp.join("templates", f"{template_name}.json")
+        file_name = osp.join("prompt_templates", f"{template_name}.json")
         if not osp.exists(file_name):
             raise ValueError(f"Can't read {file_name}")
         with open(file_name) as fp:
