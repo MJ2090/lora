@@ -1,4 +1,6 @@
 # Get started
+Tested env: ubuntu 22.04 python 3.10
+
 ```bash
 git clone git@github.com:MJ2090/lora.git
 
