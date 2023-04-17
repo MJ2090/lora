@@ -167,11 +167,11 @@ def main(
             gr.components.Textbox(
                 lines=5,
                 label="Output",
-            )
+            ),
             gr.components.Textbox(
                 lines=10,
                 label="Original Output",
-            )
+            ),
         ],
         title="LoRA from L5",
         description="Test fine tuned models.",
