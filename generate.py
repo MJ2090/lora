@@ -23,21 +23,7 @@ except:  # noqa: E722
     pass
 
 
-def main(
-    load_8bit: bool = False,
-    base_model: str = "decapoda-research/llama-7b-hf",
-    lora_weights: str = "training_results/simple_data_done",
-    prompt_template: str = "",  # The prompt template to use, will default to alpaca.
-    server_name: str = "0.0.0.0",  # Allows to listen on all interfaces by providing '0.
-    share_gradio: bool = True,
-):
-    base_model = base_model or os.environ.get("BASE_MODEL", "")
-    assert (
-        base_model
-    ), "Please specify a --base_model, e.g. --base_model='huggyllama/llama-7b'"
-
-    prompter = Prompter(prompt_template)
-    tokenizer = LlamaTokenizer.from_pretrained(base_model)
+def get_model(device: str = ''):
     if device == "cuda":
         model = LlamaForCausalLM.from_pretrained(
             base_model,
@@ -71,7 +57,26 @@ def main(
             lora_weights,
             device_map={"": device},
         )
+    return model
 
+
+def main(
+    load_8bit: bool = False,
+    base_model: str = "decapoda-research/llama-7b-hf",
+    lora_weights: str = "training_results/simple_data_done",
+    prompt_template: str = "",  # The prompt template to use, will default to alpaca.
+    server_name: str = "0.0.0.0",  # Allows to listen on all interfaces by providing '0.
+    share_gradio: bool = True,
+):
+    base_model = base_model or os.environ.get("BASE_MODEL", "")
+    assert (
+        base_model
+    ), "Please specify a --base_model, e.g. --base_model='huggyllama/llama-7b'"
+
+    prompter = Prompter(prompt_template)
+    tokenizer = LlamaTokenizer.from_pretrained(base_model)
+    
+    model = get_model(device)
     # unwind broken decapoda-research config
     model.config.pad_token_id = tokenizer.pad_token_id = 0  # unk
     model.config.bos_token_id = 1
