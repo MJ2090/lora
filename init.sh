@@ -3,6 +3,7 @@
 echo "BASE started =============================="
 sudo apt update
 sudo apt install python3-pip -y
+sudo apt install mlocate -y
 echo "BASE ended ================================"
 
 echo "CUDA started =============================="
