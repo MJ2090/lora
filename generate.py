@@ -173,7 +173,7 @@ def main(
                 label="Original Output",
             ),
         ],
-        title="LoRA from L5",
+        title="LoRA with Done.",
         description="Test fine tuned models.",
     ).queue().launch(server_name=server_name, share=share_gradio)
 
