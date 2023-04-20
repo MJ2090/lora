@@ -1,0 +1,5 @@
+{
+    "description": "Template 1 used by Therapy.",
+    "prompt_input": "The Input contains a piece of a dialogue between a patient and a therapist. Complete the Therapist's reply and put the reply in the Response.\n\n### Input:\n{input}\n\n### Response:\n",
+    "response_split": "### Response:"
+}

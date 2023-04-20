@@ -1,6 +1,0 @@
-{
-    "description": "Template used by Therapy.",
-    "prompt_input": "Below is a piece of a dialogue between a patient and a therapist. The patient's words are put in the Instruction, please complete the Therapist's reply and put it in the Response.\n\n### Instruction:\n{instruction}\n\n### Input:\n{input}\n\n### Response:\n",
-    "prompt_no_input": "Below is a piece of a dialogue between a patient and a therapist. The patient's words are put in the Instruction, please complete the Therapist's reply and put it in the Response.\n\n### Instruction:\n{instruction}\n\n### Response:\n",
-    "response_split": "### Response:"    
-}
