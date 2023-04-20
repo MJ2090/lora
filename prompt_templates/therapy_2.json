@@ -1,5 +1,5 @@
 {
     "description": "Template 1 used by Therapy.",
-    "prompt_input": "The Input contains a dialogue between a patient and a therapist. Continue the dialogu by writing one reply from the therapist and put the reply in the Response.\n\n### Input:\n{input}\n\n### Response:\n",
+    "prompt_input": "The Instruction contains a dialogue between a patient and a therapist. Continue the dialogu by writing one reply from the therapist and put the reply in the Response.\n\n### Instruction:\n{instruction}\n\n### Response:\n",
     "response_split": "### Response:"
 }
