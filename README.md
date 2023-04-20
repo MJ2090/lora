@@ -7,6 +7,14 @@ git clone git@github.com:MJ2090/lora.git
 sh ~/lora/init.sh
 ```
 
+Sample cmd:
+```bash
+python3 finetune.py --base_model 'decapoda-research/llama-13b-hf' --data_path 'training_data/therapy_no_input_11296.json' --output_dir 'training_results/13b_therapy' --learning_rate 1e-4
+```
+```bash
+python3 generate.py --base_model 'decapoda-research/llama-13b-hf' --lora_weights 'training_results/13b_therapy'
+```
+
 # 🦙🌲🤏 Alpaca-LoRA
 
 - 🤗 **Try the pretrained model out [here](https://huggingface.co/spaces/tloen/alpaca-lora), courtesy of a GPU grant from Huggingface!**
