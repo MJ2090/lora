@@ -17,8 +17,8 @@ def clean():
         f = open(f'training_data/{f_name}', 'r')
         s = json.loads(f.read())
         for item in s:
-            print(item)
-            all_json.append({'instruction': 'answer the question in the input.', 'input': item['question:'], 'output': item['answer']})
+            #print(item)
+            all_json.append({'instruction': 'answer the question in the input.', 'input': item['question'], 'output': item['answer']})
 
     f = open(f'training_data/{output_file}', 'w')
     f.write(json.dumps(all_json))
