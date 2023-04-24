@@ -62,7 +62,7 @@ def main(
 
     prompter = Prompter(prompt_template)
     tokenizer = LlamaTokenizer.from_pretrained(base_model)
-    model = get_model(device, load_8bit, base_model, lora_weights, tokenizer)
+    model = get_model(device, load_8bit, base_model, tokenizer)
 
     def evaluate(
         instruction,
