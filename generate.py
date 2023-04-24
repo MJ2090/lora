@@ -136,7 +136,7 @@ def main(
         if verbose:
             print("s = ", s, "\nEND_s")
             print("output = ", output, "\nEND_output\n")
-        yield prompter.get_response(output), output
+        yield prompter.get_response(output), output, prompt
 
     gr.Interface(
         fn=evaluate,
@@ -166,11 +166,15 @@ def main(
         outputs=[
             gr.components.Textbox(
                 lines=5,
-                label="Output",
+                label="Truncated output",
             ),
             gr.components.Textbox(
                 lines=10,
-                label="Original Output",
+                label="Original output",
+            ),
+            gr.components.Textbox(
+                lines=10,
+                label="Original prompt",
             ),
         ],
         title="LoRA with Done.",
