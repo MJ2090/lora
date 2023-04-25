@@ -156,7 +156,7 @@ def generation_dialogue():
     my_args = []
     for p in patients:
         for t in therapists:
-            if count <= 7000:
+            if count <= 240:
                 count += 1
                 continue
             if count > 320:
@@ -182,7 +182,7 @@ def generation_dialogue_new():
         for j in jobs:
             for p in patients:
                 for t in therapists:
-                    if count <= 48:
+                    if count <= 7000:
                         count += 1
                         continue
                     messages=[
