@@ -182,11 +182,11 @@ def generation_dialogue_new():
         for j in jobs:
             for p in patients:
                 for t in therapists:
-                    if count <= 36:
+                    if count <= 48:
                         count += 1
                         continue
                     messages=[
-                        {"role": "system", "content": f"Generate a long conversation with more than 1500 words between a Patient and a Therapist. The Patient {a}, and {j}. The Patient {p}. The Therapist {t}"},
+                        {"role": "system", "content": f"Generate a long conversation with more than 2000 words between a Patient and a Therapist. The Patient {a}, and {j}. The Patient {p}. The Therapist {t}"},
                     ]
                     my_args.append((messages, count))
                     if len(my_args) == 6:
