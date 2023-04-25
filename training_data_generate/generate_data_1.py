@@ -2,6 +2,7 @@ import openai
 import json
 import re
 from multiprocessing import Pool, freeze_support
+import os
 
 ages = ['are in their late 30s.',
         'are a teenage.',
@@ -122,10 +123,8 @@ patients = ['recently lost their mother to a sudden illness. They are struggling
             'have been diagnosed with seasonal affective disorder, a type of depression that typically occurs during the winter months. They experience symptoms such as fatigue, irritability, and a loss of interest in activities they once enjoyed. They seek therapy to address the underlying causes of their SAD, develop strategies for managing their symptoms, and improve their overall well-being.',
             'are a caregiver for a family member or loved one who has a chronic illness or disability, and they are struggling with feelings of stress, burnout, and guilt. Their caregiving role has taken a toll on their mental health, relationships, and personal life. They seek therapy to process their emotions, develop strategies for self-care and stress management, and find support in navigating the challenges of caregiving.',
             ]
-therapists = ['is familiar with Cognitive behavioral therapy, asks questions based on the conversation to and provides professional mental support to the patient.',
-                'often guides their patients through their way to find solutions by asking them questions based on their background and experiments.',
-                'cares about their patients, ask patients questions, and is familiar with Family Therapy, providing mental support to patients of all ages.',
-                'is able to build a trusting and supportive relationship with their clients, especially with middle-aged and retired people.']
+therapists = ["is familiar with Cognitive behavioral therapy, asks questions based on patient's experience and problems, guiding the patient and providing mental support to the patient.",
+                'cares about their patients, guides their patients through their way to find solutions to their problems by asking questions based on their experiments and listening patiently.',]
 
 
 def call_openai(messages, model):
@@ -139,14 +138,17 @@ def call_openai(messages, model):
 
 
 def run_it(messages, count):
-    print(f'{count} started...' )
-    openai_response = call_openai(messages, model='gpt-3.5-turbo')
-    ai_message = openai_response["choices"][0]["message"]["content"]
-    file_name = f'data_1/therapy_1_{count}.txt'
-    f = open(file_name, "w")
-    f.write(ai_message)
-    f.close()
-    print(f'{count} generated...' )
+    try:
+        print(f'{count} started...' )
+        openai_response = call_openai(messages, model='gpt-3.5-turbo')
+        ai_message = openai_response["choices"][0]["message"]["content"]
+        file_name = f'data_1/therapy_1_{count}.txt'
+        f = open(file_name, "w")
+        f.write(ai_message)
+        f.close()
+        print(f'{count} generated...' )
+    except Exception as e:
+        print(f'{count} failed...', e)
 
 
 def generation_dialogue():
@@ -182,15 +184,16 @@ def generation_dialogue_new():
         for j in jobs:
             for p in patients:
                 for t in therapists:
-                    if count <= 48:
+                    file_name = f'data_1/therapy_1_{count}.txt'
+                    if os.path.exists(file_name):
                         count += 1
                         continue
                     messages=[
-                        {"role": "system", "content": f"Generate a long conversation with more than 2000 words between a Patient and a Therapist. The Patient {a}, and {j}. The Patient {p}. The Therapist {t}"},
+                        {"role": "system", "content": f"Generate a long conversation with more than 2100 words between a Patient and a Therapist. The Patient {a}, and {j}. The Patient {p}. The Therapist {t}"},
                     ]
                     my_args.append((messages, count))
-                    if len(my_args) == 6:
-                        with Pool(6) as p:
+                    if len(my_args) == 8:
+                        with Pool(8) as p:
                             print(p.starmap(run_it, my_args))
                         my_args = []
                     count += 1
