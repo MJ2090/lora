@@ -45,6 +45,7 @@ class Prompter(object):
         if label:
             res = f"{res}{label}"
         if self._verbose:
+            print('=============================== full prompt ==========================')
             print(res)
         return res
 
