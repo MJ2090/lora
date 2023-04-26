@@ -31,5 +31,5 @@ DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 DEVICE
 
 df = pd.read_csv("bitcoin-sentiment-tweets.csv")
-df.head()
-df.sentiment.value_counts()
+print(df.head())
+print(df.sentiment.value_counts())
