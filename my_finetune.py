@@ -70,3 +70,53 @@ tokenizer.pad_token_id = (
     0  # unk. we want this to be different from the eos token
 )
 tokenizer.padding_side = "left"
+
+data = load_dataset("json", data_files="alpaca-bitcoin-sentiment-dataset.json")
+print(data["train"])
+
+def generate_prompt(data_point):
+    return f"""Below is an instruction that describes a task, paired with an input that provides further context. Write a response that appropriately completes the request.  # noqa: E501
+### Instruction:
+{data_point["instruction"]}
+### Input:
+{data_point["input"]}
+### Response:
+{data_point["output"]}"""
+ 
+
+CUTOFF_LEN = 256
+
+def tokenize(prompt, add_eos_token=True):
+    result = tokenizer(
+        prompt,
+        truncation=True,
+        max_length=CUTOFF_LEN,
+        padding=False,
+        return_tensors=None,
+    )
+    if (
+        result["input_ids"][-1] != tokenizer.eos_token_id
+        and len(result["input_ids"]) < CUTOFF_LEN
+        and add_eos_token
+    ):
+        result["input_ids"].append(tokenizer.eos_token_id)
+        result["attention_mask"].append(1)
+ 
+    result["labels"] = result["input_ids"].copy()
+ 
+    return result
+ 
+def generate_and_tokenize_prompt(data_point):
+    full_prompt = generate_prompt(data_point)
+    tokenized_full_prompt = tokenize(full_prompt)
+    return tokenized_full_prompt
+
+train_val = data["train"].train_test_split(
+    test_size=200, shuffle=True, seed=42
+)
+train_data = (
+    train_val["train"].map(generate_and_tokenize_prompt)
+)
+val_data = (
+    train_val["test"].map(generate_and_tokenize_prompt)
+)
