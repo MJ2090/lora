@@ -120,3 +120,73 @@ train_data = (
 val_data = (
     train_val["test"].map(generate_and_tokenize_prompt)
 )
+
+LORA_R = 8
+LORA_ALPHA = 16
+LORA_DROPOUT= 0.05
+LORA_TARGET_MODULES = [
+    "q_proj",
+    "v_proj",
+]
+ 
+BATCH_SIZE = 128
+MICRO_BATCH_SIZE = 4
+GRADIENT_ACCUMULATION_STEPS = BATCH_SIZE // MICRO_BATCH_SIZE
+LEARNING_RATE = 3e-4
+TRAIN_STEPS = 300
+OUTPUT_DIR = "experiments"
+
+model = prepare_model_for_int8_training(model)
+config = LoraConfig(
+    r=LORA_R,
+    lora_alpha=LORA_ALPHA,
+    target_modules=LORA_TARGET_MODULES,
+    lora_dropout=LORA_DROPOUT,
+    bias="none",
+    task_type="CAUSAL_LM",
+)
+model = get_peft_model(model, config)
+model.print_trainable_parameters()
+
+training_arguments = transformers.TrainingArguments(
+    per_device_train_batch_size=MICRO_BATCH_SIZE,
+    gradient_accumulation_steps=GRADIENT_ACCUMULATION_STEPS,
+    warmup_steps=100,
+    max_steps=TRAIN_STEPS,
+    learning_rate=LEARNING_RATE,
+    fp16=True,
+    logging_steps=10,
+    optim="adamw_torch",
+    evaluation_strategy="steps",
+    save_strategy="steps",
+    eval_steps=50,
+    save_steps=50,
+    output_dir=OUTPUT_DIR,
+    save_total_limit=3,
+    load_best_model_at_end=True,
+    report_to="tensorboard"
+)
+
+data_collator = transformers.DataCollatorForSeq2Seq(
+    tokenizer, pad_to_multiple_of=8, return_tensors="pt", padding=True
+)
+
+trainer = transformers.Trainer(
+    model=model,
+    train_dataset=train_data,
+    eval_dataset=val_data,
+    args=training_arguments,
+    data_collator=data_collator
+)
+model.config.use_cache = False
+old_state_dict = model.state_dict
+model.state_dict = (
+    lambda self, *_, **__: get_peft_model_state_dict(
+        self, old_state_dict()
+    )
+).__get__(model, type(model))
+ 
+model = torch.compile(model)
+ 
+trainer.train()
+model.save_pretrained(OUTPUT_DIR)
