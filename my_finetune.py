@@ -22,10 +22,10 @@ import matplotlib as mpl
 import seaborn as sns
 from pylab import rcParams
  
-#%matplotlib inline
-sns.set(rc={'figure.figsize':(10, 7)})
-sns.set(rc={'figure.dpi':100})
-sns.set(style='white', palette='muted', font_scale=1.2)
+# #%matplotlib inline
+# sns.set(rc={'figure.figsize':(10, 7)})
+# sns.set(rc={'figure.dpi':100})
+# sns.set(style='white', palette='muted', font_scale=1.2)
  
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 DEVICE
