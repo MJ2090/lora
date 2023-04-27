@@ -84,7 +84,7 @@ def generate_prompt(data_point):
 {data_point["output"]}"""
  
 
-CUTOFF_LEN = 256
+CUTOFF_LEN = 512
 
 def tokenize(prompt, add_eos_token=True):
     result = tokenizer(
