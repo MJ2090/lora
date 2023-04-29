@@ -6,6 +6,7 @@ sudo apt install python3-pip -y
 sudo apt install mlocate -y
 pip install gdown
 pip install gradio
+pip install wandb
 echo "BASE ended ================================"
 
 echo "CUDA started =============================="
