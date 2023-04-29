@@ -53,36 +53,47 @@ def train(
     wandb_run_name: str = "",
     wandb_watch: str = "",  # options: false | gradients | all
     wandb_log_model: str = "",  # options: false | true
-    resume_from_checkpoint: str = None,  # either training checkpoint or final adapter
-    prompt_template_name: str = "alpaca",  # The prompt template to use, will default to alpaca.
+    # either training checkpoint or final adapter
+    resume_from_checkpoint: str = None,
+    # The prompt template to use, will default to alpaca.
+    prompt_template_name: str = "alpaca",
     verbose: bool = False,  # Whether to print debug information
 ):
+    cmd_information = f"""
+            base_model: {base_model}\n
+            data_path: {data_path}\n
+            output_dir: {output_dir}\n
+            batch_size: {batch_size}\n
+            micro_batch_size: {micro_batch_size}\n
+            num_epochs: {num_epochs}\n
+            num_epochs: {num_epochs}\n"
+            learning_rate: {learning_rate}\n
+            cutoff_len: {cutoff_len}\n
+            val_set_size: {val_set_size}\n
+            lora_r: {lora_r}\n
+            lora_alpha: {lora_alpha}\n
+            lora_dropout: {lora_dropout}\n
+            lora_target_modules: {lora_target_modules}\n
+            train_on_inputs: {train_on_inputs}\n
+            group_by_length: {group_by_length}\n
+            wandb_project: {wandb_project}\n
+            wandb_run_name: {wandb_run_name}\n
+            wandb_watch: {wandb_watch}\n
+            wandb_log_model: {wandb_log_model}\n
+            resume_from_checkpoint: {resume_from_checkpoint or False}\n
+            prompt template: {prompt_template_name}\n
+            verbose: {verbose}\n
+            """
+    if not os.path.exists(data_path):
+        os.mkdir(data_path)
+    cmd_record_file = os.path.join(data_path, 'cmd.txt')
+    f = open(cmd_record_file, 'w')
+    f.write(cmd_information)
+    f.close()
+    print(f"Command recorded into {cmd_record_file}")
+
     if int(os.environ.get("LOCAL_RANK", 0)) == 0:
-        print(
-            f"Training Alpaca-LoRA model with params:\n"
-            f"base_model: {base_model}\n"
-            f"data_path: {data_path}\n"
-            f"output_dir: {output_dir}\n"
-            f"batch_size: {batch_size}\n"
-            f"micro_batch_size: {micro_batch_size}\n"
-            f"num_epochs: {num_epochs}\n"
-            f"learning_rate: {learning_rate}\n"
-            f"cutoff_len: {cutoff_len}\n"
-            f"val_set_size: {val_set_size}\n"
-            f"lora_r: {lora_r}\n"
-            f"lora_alpha: {lora_alpha}\n"
-            f"lora_dropout: {lora_dropout}\n"
-            f"lora_target_modules: {lora_target_modules}\n"
-            f"train_on_inputs: {train_on_inputs}\n"
-            f"group_by_length: {group_by_length}\n"
-            f"wandb_project: {wandb_project}\n"
-            f"wandb_run_name: {wandb_run_name}\n"
-            f"wandb_watch: {wandb_watch}\n"
-            f"wandb_log_model: {wandb_log_model}\n"
-            f"resume_from_checkpoint: {resume_from_checkpoint or False}\n"
-            f"prompt template: {prompt_template_name}\n"
-            f"verbose: {verbose}\n"
-        )
+        print(cmd_information)
     assert (
         base_model
     ), "Please specify a --base_model, e.g. --base_model='decapoda-research/llama-7b-hf'"
@@ -203,7 +214,8 @@ def train(
         else:
             print(f"Checkpoint {checkpoint_name} not found")
 
-    model.print_trainable_parameters()  # Be more transparent about the % of trainable params.
+    # Be more transparent about the % of trainable params.
+    model.print_trainable_parameters()
 
     if val_set_size > 0:
         train_val = data["train"].train_test_split(
