@@ -60,30 +60,30 @@ def train(
     verbose: bool = False,  # Whether to print debug information
 ):
     cmd_information = f"""
-            base_model: {base_model}\n
-            data_path: {data_path}\n
-            output_dir: {output_dir}\n
-            batch_size: {batch_size}\n
-            micro_batch_size: {micro_batch_size}\n
-            num_epochs: {num_epochs}\n
-            num_epochs: {num_epochs}\n"
-            learning_rate: {learning_rate}\n
-            cutoff_len: {cutoff_len}\n
-            val_set_size: {val_set_size}\n
-            lora_r: {lora_r}\n
-            lora_alpha: {lora_alpha}\n
-            lora_dropout: {lora_dropout}\n
-            lora_target_modules: {lora_target_modules}\n
-            train_on_inputs: {train_on_inputs}\n
-            group_by_length: {group_by_length}\n
-            wandb_project: {wandb_project}\n
-            wandb_run_name: {wandb_run_name}\n
-            wandb_watch: {wandb_watch}\n
-            wandb_log_model: {wandb_log_model}\n
-            resume_from_checkpoint: {resume_from_checkpoint or False}\n
-            prompt template: {prompt_template_name}\n
-            verbose: {verbose}\n
-            """
+base_model: {base_model}
+data_path: {data_path}
+output_dir: {output_dir}
+batch_size: {batch_size}
+micro_batch_size: {micro_batch_size}
+num_epochs: {num_epochs}
+num_epochs: {num_epochs}
+learning_rate: {learning_rate}
+cutoff_len: {cutoff_len}
+val_set_size: {val_set_size}
+lora_r: {lora_r}
+lora_alpha: {lora_alpha}
+lora_dropout: {lora_dropout}
+lora_target_modules: {lora_target_modules}
+train_on_inputs: {train_on_inputs}
+group_by_length: {group_by_length}
+wandb_project: {wandb_project}
+wandb_run_name: {wandb_run_name}
+wandb_watch: {wandb_watch}
+wandb_log_model: {wandb_log_model}
+resume_from_checkpoint: {resume_from_checkpoint or False}
+prompt template: {prompt_template_name}
+verbose: {verbose}\n
+"""
     if not os.path.exists(output_dir):
         os.mkdir(output_dir)
     cmd_record_file = os.path.join(output_dir, 'cmd.txt')
