@@ -10,6 +10,8 @@ sh ~/lora/init.sh
 Sample cmd:
 ```bash
 python3 finetune.py --base_model 'decapoda-research/llama-13b-hf' --data_path 'training_data/therapy_no_input_11296.json' --output_dir 'training_results/13b_therapy' --learning_rate 1e-4
+
+python3 finetune.py --base_model 'decapoda-research/llama-7b-hf' --data_path 'training_data/question.json' --output_dir 'training_results/question_2' --learning_rate 5e-4 --wandb_run_name 'question test' --wandb_project 'minjun-project-1'
 ```
 ```bash
 python3 generate.py --base_model 'decapoda-research/llama-13b-hf' --lora_weights 'training_results/13b_therapy'
