@@ -84,9 +84,9 @@ def train(
             prompt template: {prompt_template_name}\n
             verbose: {verbose}\n
             """
-    if not os.path.exists(data_path):
-        os.mkdir(data_path)
-    cmd_record_file = os.path.join(data_path, 'cmd.txt')
+    if not os.path.exists(output_dir):
+        os.mkdir(output_dir)
+    cmd_record_file = os.path.join(output_dir, 'cmd.txt')
     f = open(cmd_record_file, 'w')
     f.write(cmd_information)
     f.close()
