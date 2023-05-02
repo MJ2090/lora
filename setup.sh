@@ -7,6 +7,7 @@ sudo apt install mlocate -y
 pip install gdown
 pip install gradio
 pip install wandb
+pip install tensorboardX==2.6
 echo "BASE ended ================================"
 
 echo "CUDA started =============================="
