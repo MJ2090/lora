@@ -150,12 +150,12 @@ def main(
         bot_message = prompter.get_response(output)
         chat_history.append((message, bot_message))
         time.sleep(1)
-        return "", chat_history
+        return "Patient: ", chat_history
 
     with gr.Blocks() as demo:
+        clear = gr.Button("Clear")
         chatbot = gr.Chatbot()
         msg = gr.Textbox()
-        clear = gr.Button("Clear")
 
         msg.submit(evaluate, [
             gr.components.Textbox(
@@ -167,10 +167,10 @@ def main(
                 minimum=0, maximum=1, value=0.1, label="Temperature"
             ),
             gr.components.Slider(
-                minimum=0, maximum=1, value=0.75, label="Top p"
+                minimum=0, maximum=1, value=0.75, label="Top ppp"
             ),
             gr.components.Slider(
-                minimum=0, maximum=100, step=1, value=40, label="Top k"
+                minimum=0, maximum=100, step=1, value=40, label="Top kkk"
             ),
             gr.components.Slider(
                 minimum=1, maximum=4, step=1, value=4, label="Beams"
