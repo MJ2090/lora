@@ -14,7 +14,6 @@ import random
 import time
 
 
-
 if torch.cuda.is_available():
     device = "cuda"
 else:
@@ -27,7 +26,7 @@ except:  # noqa: E722
     pass
 
 
-def get_model(device: str = '', load_8bit: bool = False, base_model: str = '', lora_weights: str = '', tokenizer = None):
+def get_model(device: str = '', load_8bit: bool = False, base_model: str = '', lora_weights: str = '', tokenizer=None):
     if device == "cuda":
         model = LlamaForCausalLM.from_pretrained(
             base_model,
@@ -61,7 +60,7 @@ def get_model(device: str = '', load_8bit: bool = False, base_model: str = '', l
             lora_weights,
             device_map={"": device},
         )
-        
+
     # unwind broken decapoda-research config
     model.config.pad_token_id = tokenizer.pad_token_id = 0  # unk
     model.config.bos_token_id = 1
@@ -73,16 +72,18 @@ def get_model(device: str = '', load_8bit: bool = False, base_model: str = '', l
     model.eval()
     if torch.__version__ >= "2" and sys.platform != "win32":
         model = torch.compile(model)
-    
+
     return model
 
 
 def main(
     load_8bit: bool = False,
     base_model: str = "decapoda-research/llama-7b-hf",
-    lora_weights: str = "training_results/simple_data_done",
-    prompt_template: str = "",  # The prompt template to use, will default to alpaca.
-    server_name: str = "0.0.0.0",  # Allows to listen on all interfaces by providing '0.
+    lora_weights: str = "training_results/therapy_1",
+    # The prompt template to use, will default to alpaca.
+    prompt_template: str = "",
+    # Allows to listen on all interfaces by providing '0.
+    server_name: str = "0.0.0.0",
     share_gradio: bool = True,
     verbose: bool = True,
 ):
@@ -97,16 +98,21 @@ def main(
 
     def evaluate(
         instruction,
-        input=None,
         temperature=0.1,
         top_p=0.75,
         top_k=40,
         num_beams=4,
         max_new_tokens=128,
-        stream_output=False,
+        message='',
+        chat_history=[],
         **kwargs,
     ):
-        prompt = prompter.generate_prompt(instruction, input)
+        my_input = ''
+        for item in chat_history:
+            my_input = my_input + item[0] + '\n' + item[1] + '\n'
+        my_input = my_input + message + '\n'
+        print("respond... ", message, chat_history, my_input)
+        prompt = prompter.generate_prompt(instruction, my_input)
         if verbose:
             print("prompt = ", prompt, "\nEND_prompt\n")
         inputs = tokenizer(prompt, return_tensors="pt")
@@ -126,7 +132,7 @@ def main(
             "output_scores": True,
             "max_new_tokens": max_new_tokens,
         }
-        
+
         with torch.no_grad():
             generation_output = model.generate(
                 input_ids=input_ids,
@@ -140,17 +146,23 @@ def main(
         if verbose:
             print("s = ", s, "\nEND_s")
             print("output = ", output, "\nEND_output\n")
-        yield prompter.get_response(output), output, prompt
+        # yield prompter.get_response(output), output, prompt
+        bot_message = prompter.get_response(output)
+        chat_history.append((message, bot_message))
+        time.sleep(1)
+        return "", chat_history
 
-    gr.Interface(
-        fn=evaluate,
-        inputs=[
+    with gr.Blocks() as demo:
+        chatbot = gr.Chatbot()
+        msg = gr.Textbox()
+        clear = gr.Button("Clear")
+
+        msg.submit(evaluate, [
             gr.components.Textbox(
                 lines=2,
                 label="Instruction",
                 placeholder="Tell me about LoRA.",
             ),
-            gr.components.Textbox(lines=2, label="Input", placeholder="none"),
             gr.components.Slider(
                 minimum=0, maximum=1, value=0.1, label="Temperature"
             ),
@@ -166,46 +178,11 @@ def main(
             gr.components.Slider(
                 minimum=1, maximum=2000, step=1, value=128, label="Max tokens"
             ),
-        ],
-        outputs=[
-            gr.components.Textbox(
-                lines=5,
-                label="Truncated output",
-            ),
-            gr.components.Textbox(
-                lines=10,
-                label="Original output",
-            ),
-            gr.components.Textbox(
-                lines=10,
-                label="Original prompt",
-            ),
-        ],
-        title="LoRA with Done.",
-        description="Test fine tuned models.",
-    ).queue().launch(server_name=server_name, share=share_gradio)
-
-
-def demo(
-        server_name: str = "0.0.0.0",  # Allows to listen on all interfaces by providing '0.
-        share_gradio: bool = True):
-    with gr.Blocks() as demo:
-        chatbot = gr.Chatbot()
-        msg = gr.Textbox()
-        clear = gr.Button("Clear")
-
-        def respond(message, chat_history):
-            print("respond... ", message, chat_history)
-            bot_message = random.choice(["How are you?", "I love you", "I'm very hungry"])
-            chat_history.append((message, bot_message))
-            time.sleep(1)
-            return "", chat_history
-
-        msg.submit(respond, [msg, chatbot], [msg, chatbot])
+            msg, chatbot, ], [msg, chatbot])
         clear.click(lambda: None, None, chatbot, queue=False)
 
     demo.launch(server_name=server_name, share=share_gradio)
 
 
 if __name__ == "__main__":
-    fire.Fire(demo)
+    fire.Fire(main)
