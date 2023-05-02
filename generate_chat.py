@@ -195,6 +195,7 @@ def demo(
         clear = gr.Button("Clear")
 
         def respond(message, chat_history):
+            print("respond... ", message, chat_history)
             bot_message = random.choice(["How are you?", "I love you", "I'm very hungry"])
             chat_history.append((message, bot_message))
             time.sleep(1)
