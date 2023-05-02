@@ -23,7 +23,7 @@ echo "LORA ended ================================"
 
 echo "BASH started =============================="
 echo 'export LD_LIBRARY_PATH=:/usr/lib/x86_64-linux-gnu/' >> ~/.bashrc
-echo 'alias g3="python3"' >> ~/.bashrc
+echo 'alias p3="python3"' >> ~/.bashrc
 echo 'alias gl="git pull"' >> ~/.bashrc
 . ~/.bashrc
 echo "BASH ended ================================"
