@@ -153,31 +153,37 @@ def main(
         return "Patient: ", chat_history
 
     with gr.Blocks() as demo:
-        clear = gr.Button("Clear")
+        temperature = gr.components.Slider(
+            minimum=0, maximum=1, value=0.1, label="Temperature"
+        )
+        top_p = gr.components.Slider(
+            minimum=0, maximum=1, value=0.75, label="Top ppp"
+        )
+        top_k = gr.components.Slider(
+            minimum=0, maximum=100, step=1, value=40, label="Top kkk"
+        )
+        beams = gr.components.Slider(
+            minimum=1, maximum=4, step=1, value=4, label="Beams"
+        )
+        max_token = gr.components.Slider(
+            minimum=1, maximum=2000, step=1, value=128, label="Max tokens"
+        )
+        instruction = gr.components.Textbox(
+            lines=2,
+            label="Instruction",
+            value="Below is a dialogue between a patient and a therapist. Write one reply as if you were the therapist.",
+        )
         chatbot = gr.Chatbot()
-        msg = gr.Textbox()
+        msg = gr.Textbox(value='Patient: ')
+        clear = gr.Button("Clear")
 
         msg.submit(evaluate, [
-            gr.components.Textbox(
-                lines=2,
-                label="Instruction",
-                placeholder="Tell me about LoRA.",
-            ),
-            gr.components.Slider(
-                minimum=0, maximum=1, value=0.1, label="Temperature"
-            ),
-            gr.components.Slider(
-                minimum=0, maximum=1, value=0.75, label="Top ppp"
-            ),
-            gr.components.Slider(
-                minimum=0, maximum=100, step=1, value=40, label="Top kkk"
-            ),
-            gr.components.Slider(
-                minimum=1, maximum=4, step=1, value=4, label="Beams"
-            ),
-            gr.components.Slider(
-                minimum=1, maximum=2000, step=1, value=128, label="Max tokens"
-            ),
+            instruction,
+            temperature,
+            top_p,
+            top_k,
+            beams,
+            max_token,
             msg, chatbot, ], [msg, chatbot])
         clear.click(lambda: None, None, chatbot, queue=False)
 
