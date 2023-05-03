@@ -81,6 +81,7 @@ def main(
     server_name: str = "0.0.0.0",  # Allows to listen on all interfaces by providing '0.
     share_gradio: bool = True,
     verbose: bool = True,
+    default_instruction: str = "answer the question in the input.",
 ):
     base_model = base_model or os.environ.get("BASE_MODEL", "")
     assert (
@@ -145,6 +146,7 @@ def main(
                 lines=2,
                 label="Instruction",
                 placeholder="Tell me about LoRA.",
+                value=default_instruction,
             ),
             gr.components.Textbox(lines=2, label="Input", placeholder="none"),
             gr.components.Slider(
