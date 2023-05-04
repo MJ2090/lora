@@ -66,7 +66,6 @@ output_dir: {output_dir}
 batch_size: {batch_size}
 micro_batch_size: {micro_batch_size}
 num_epochs: {num_epochs}
-num_epochs: {num_epochs}
 learning_rate: {learning_rate}
 cutoff_len: {cutoff_len}
 val_set_size: {val_set_size}
