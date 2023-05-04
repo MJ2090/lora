@@ -28,8 +28,8 @@ from utils.prompter import Prompter
 def train(
     # model/data params
     base_model: str = "",  # the only required argument
-    data_path: str = "yahma/alpaca-cleaned",
-    output_dir: str = "./lora-alpaca",
+    data_path: str = "training_data/question_1",
+    output_dir: str = "training_results/test1",
     # training hyperparams
     batch_size: int = 128,
     micro_batch_size: int = 4,
@@ -281,9 +281,13 @@ verbose: {verbose}\n
 
     model.save_pretrained(output_dir)
 
-    print(
-        "\n If there's a warning about missing keys above, please disregard :)"
-    )
+    finish_msg = f"""
+    ======================================
+    The training has finished, congrats :D
+    Result is avaiable at {output_dir}.
+    ======================================
+    """
+    print(finish_msg)
 
 
 if __name__ == "__main__":
