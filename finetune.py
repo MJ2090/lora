@@ -28,14 +28,14 @@ from utils.prompter import Prompter
 def train(
     # model/data params
     base_model: str = "",  # the only required argument
-    data_path: str = "yahma/alpaca-cleaned",
-    output_dir: str = "./lora-alpaca",
+    data_path: str = "training_data/question_1",
+    output_dir: str = "training_results/test1",
     # training hyperparams
     batch_size: int = 128,
     micro_batch_size: int = 4,
     num_epochs: int = 3,
     learning_rate: float = 3e-4,
-    cutoff_len: int = 256,
+    cutoff_len: int = 512,
     val_set_size: int = 2000,
     # lora hyperparams
     lora_r: int = 8,
@@ -247,7 +247,7 @@ verbose: {verbose}\n
             learning_rate=learning_rate,
             fp16=True,
             logging_steps=10,
-            optim="adamw_hf",
+            optim="adamw_torch",
             evaluation_strategy="steps" if val_set_size > 0 else "no",
             save_strategy="steps",
             eval_steps=200 if val_set_size > 0 else None,
