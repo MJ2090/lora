@@ -73,6 +73,13 @@ def get_model(device: str = '', load_8bit: bool = False, base_model: str = '', l
     return model
 
 
+def get_default_instruction(lora_weights):
+    if "question" in lora_weights:
+        return "answer the question in the input."
+    if "therapy" in lora_weights:
+        return "Below is a dialogue between a patient and a therapist. Write one reply as if you were the therapist."
+    return ""
+
 def main(
     load_8bit: bool = False,
     base_model: str = "decapoda-research/llama-7b-hf",
@@ -83,6 +90,7 @@ def main(
     verbose: bool = True,
     default_instruction: str = "answer the question in the input.",
 ):
+    default_instruction = get_default_instruction(lora_weights)
     base_model = base_model or os.environ.get("BASE_MODEL", "")
     assert (
         base_model
