@@ -120,14 +120,6 @@ def main(
             **kwargs,
         )
 
-        generate_params = {
-            "input_ids": input_ids,
-            "generation_config": generation_config,
-            "return_dict_in_generate": True,
-            "output_scores": True,
-            "max_new_tokens": max_new_tokens,
-        }
-
         with torch.no_grad():
             generation_output = model.generate(
                 input_ids=input_ids,
