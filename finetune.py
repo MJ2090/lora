@@ -21,7 +21,6 @@ from peft import (
     set_peft_model_state_dict,
 )
 from transformers import LlamaForCausalLM, LlamaTokenizer
-
 from utils.prompter import Prompter
 
 
@@ -97,7 +96,6 @@ verbose: {verbose}\n
         base_model
     ), "Please specify a --base_model, e.g. --base_model='decapoda-research/llama-7b-hf'"
     gradient_accumulation_steps = batch_size // micro_batch_size
-
     prompter = Prompter(prompt_template_name, verbose)
 
     device_map = "auto"
@@ -127,7 +125,6 @@ verbose: {verbose}\n
     )
 
     tokenizer = LlamaTokenizer.from_pretrained(base_model)
-
     tokenizer.pad_token_id = (
         0  # unk. we want this to be different from the eos token
     )
