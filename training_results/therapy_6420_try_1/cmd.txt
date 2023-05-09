@@ -1,0 +1,25 @@
+
+base_model: decapoda-research/llama-7b-hf
+data_path: training_data/therapy_6420.json
+output_dir: training_results/therapy_6420_try_1
+batch_size: 128
+micro_batch_size: 4
+num_epochs: 3
+num_epochs: 3
+learning_rate: 0.0004
+cutoff_len: 512
+val_set_size: 2000
+lora_r: 8
+lora_alpha: 16
+lora_dropout: 0.05
+lora_target_modules: ['q_proj', 'v_proj']
+train_on_inputs: True
+group_by_length: False
+wandb_project: minjun-project-1
+wandb_run_name: therapy 6420
+wandb_watch: 
+wandb_log_model: 
+resume_from_checkpoint: False
+prompt template: alpaca
+verbose: False
+
