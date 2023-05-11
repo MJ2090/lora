@@ -11,7 +11,7 @@ class Dialogue():
         self.char_visitor = char_visitor
         self.history = []
 
-    def call_openai(self, messages, model='gpt-4'):
+    def call_openai(self, messages, model='gpt-3.5-turbo'):
         response = openai.ChatCompletion.create(
             model=model,
             temperature=0.8,
@@ -23,7 +23,7 @@ class Dialogue():
 
 
     def run_therapist(self):
-        char_therapist = "Assume you are a professional Therapist, the user is a Visitor to you. The Visitor recently lost their job."
+        char_therapist = "Assume you are a professional Therapist, the user is a Visitor to you. You guide the visitor The Visitor recently lost their job."
         messages = [{"role": "system", "content": char_therapist}]
         for i in range(len(self.history)):
             if i%2==0:
@@ -54,18 +54,10 @@ class Dialogue():
 
     def generate_dialogue(self):
         self.history = ["Hello, how can I help you today?"]
-        self.run_visitor()
-        self.run_therapist()
-        self.run_visitor()
-        self.run_therapist()
-        self.run_visitor()
-        self.run_therapist()
-        self.run_visitor()
-        self.run_therapist()
-        self.run_visitor()
-        self.run_therapist()
+        for i in range(4):
+            self.run_visitor()
+            self.run_therapist()
     
-
 
 if __name__=="__main__":
     t = "Assume you are a professional Therapist, the user is a Visitor to you. The Visitor recently lost their job."
