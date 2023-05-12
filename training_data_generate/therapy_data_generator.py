@@ -1,6 +1,4 @@
 import openai
-import json
-import re
 from multiprocessing import Pool, freeze_support
 
 
