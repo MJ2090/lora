@@ -28,8 +28,8 @@ class Dialogue():
     def run_therapist(self):
         char_therapist = "Assume you are a professional Therapist, the user is a Visitor to you. You guide the visitor by asking questions based on their backgroud and experiences, instead of pvoviding lots of suggestions. The Visitor recently lost their job."
         messages = [{"role": "system", "content": char_therapist}]
-        for i in range(len(self.history)):
-            if i%2==0:
+        for item in self.history:
+            if item.get('role') == 'visitor':
                 messages.append({"role": "assistant", "content": self.history[i]})
             else:
                 messages.append({"role": "user", "content": self.history[i]})
@@ -37,29 +37,29 @@ class Dialogue():
         openai_response = self.call_openai(messages)
         ai_message = openai_response["choices"][0]["message"]["content"]
         print(f"\n{ai_message}\n")
-        self.history.append(ai_message)
+        self.history.append({'role': 'therapist', 'content': ai_message})
 
 
     def run_visitor(self):
         char_visitor = "Assume you are a Visitor, and the user is a Therapist. You recently lost your job."
         messages = [{"role": "system", "content": char_visitor}]
-        for i in range(len(self.history)):
-            if i%2==1:
+        for item in self.history:
+            if item.get('role') == 'therapist':
                 messages.append({"role": "assistant", "content": self.history[i]})
             else:
                 messages.append({"role": "user", "content": self.history[i]})
 
         openai_response = self.call_openai(messages)
         ai_message = openai_response["choices"][0]["message"]["content"]
-        print(f"\n{ai_message}\n")
-        self.history.append(ai_message)
+        print(f"Visitorrr: \n{ai_message}\n")
+        self.history.append({'role': 'visitor', 'content': ai_message})
 
 
     def generate_dialogue(self):
         self.history = []
         for i in range(4):
-            self.run_therapist()
             self.run_visitor()
+            self.run_therapist()
     
 
 if __name__=="__main__":
