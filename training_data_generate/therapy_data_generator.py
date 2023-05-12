@@ -30,9 +30,9 @@ class Dialogue():
         messages = [{"role": "system", "content": char_therapist}]
         for item in self.history:
             if item.get('role') == 'visitor':
-                messages.append({"role": "assistant", "content": self.history[i]})
+                messages.append({"role": "assistant", "content": item['content']})
             else:
-                messages.append({"role": "user", "content": self.history[i]})
+                messages.append({"role": "user", "content": item['content']})
 
         openai_response = self.call_openai(messages)
         ai_message = openai_response["choices"][0]["message"]["content"]
@@ -45,9 +45,9 @@ class Dialogue():
         messages = [{"role": "system", "content": char_visitor}]
         for item in self.history:
             if item.get('role') == 'therapist':
-                messages.append({"role": "assistant", "content": self.history[i]})
+                messages.append({"role": "assistant", "content": item['content']})
             else:
-                messages.append({"role": "user", "content": self.history[i]})
+                messages.append({"role": "user", "content": item['content']})
 
         openai_response = self.call_openai(messages)
         ai_message = openai_response["choices"][0]["message"]["content"]
