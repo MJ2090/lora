@@ -8,6 +8,7 @@ pip install gdown
 pip install gradio
 pip install wandb
 pip install tensorboardX==2.6
+pip install git+https://github.com/huggingface/peft.git@e536616888d51b453ed354a6f1e243fecb02ea08
 echo "BASE ended ================================"
 
 echo "CUDA started =============================="
